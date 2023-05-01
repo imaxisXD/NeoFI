@@ -4,7 +4,7 @@ import NavLink from './NavLink'
 export default function NavBar() {
     return (
         <nav className='nav-bar'>
-            <Image className='logo' src="neofi.svg" alt='neofi-logo' width={140} height={44} />
+            <Image className='logo' src="NeoFl.svg" alt='neofi-logo' width={140} height={44} />
             <div>
                 <NavLink />
             </div>
