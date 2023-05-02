@@ -75,7 +75,7 @@ export default function Card() {
                 }} />
             </div>
             <div className='price-container'>
-                <Image src='Union.svg' alt='div-box' width={470} height={567} priority={true} />
+                <Image src='Union.svg' alt='div-box' width={470} height={567} priority={true} className='main-img' />
                 <div className='content-container'>
                     <div className='row-container'>
                         <p>Current value</p>

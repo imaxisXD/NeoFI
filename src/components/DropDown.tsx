@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { ReactEventHandler, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface dropDownProps {
     currentSelected: Symbol;
@@ -19,6 +19,7 @@ function DropDown({ currentSelected, setSymbol }: dropDownProps) {
     const [tokenList, setTokenList] = useState<Array<{ name: string; baseAsset: string; image: string }>>([]);
     const [toggleDialog, setToggleDialog] = useState(false);
     const [searchText, setSearchText] = useState('');
+
     useEffect(() => {
         const abortController = new AbortController();
         if (tokenList.length > 0) {
@@ -31,7 +32,6 @@ function DropDown({ currentSelected, setSymbol }: dropDownProps) {
                     setTokenList(JSON.parse(cachedData));
                     return;
                 }
-
                 const response = await fetch('https://api.binance.com/api/v3/exchangeInfo');
                 const data = await response.json();
                 const symbols = data.symbols
@@ -54,7 +54,6 @@ function DropDown({ currentSelected, setSymbol }: dropDownProps) {
         return () => {
             abortController.abort();
         }
-
     }, [])
 
     function handleDropdown() {
