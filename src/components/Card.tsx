@@ -70,7 +70,9 @@ export default function Card() {
     return (
         <div className='card-container'>
             <div className='circular-container'>
-                <Image src={symbol.image} alt={`${symbol.name}-logo`} width={50} height={50} />
+                <Image src={symbol.image} alt={`${symbol.name}-logo`} width={50} height={50} onError={(e) => {
+                    setSymbol({ ...symbol, image: "/icon-error.png" });
+                }} />
             </div>
             <div className='price-container'>
                 <Image src='Union.svg' alt='div-box' width={470} height={567} priority={true} />

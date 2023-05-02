@@ -279,7 +279,7 @@ input:focus {
   height: 90vh;
   background-color: #0b0819e7;
   z-index: 9999;
-  transition: all 1s ease-in-out;
+  transition: all 0.25s ease-in-out;
 }
 
 .dialog-content {
@@ -296,7 +296,7 @@ input:focus {
   justify-content: center;
   text-align: left;
   border-radius: 30px;
-
+  transition: all 0.25s ease-in-out;
 }
 
 .search-container {
@@ -358,4 +358,11 @@ input:focus {
   max-height: 600px;
   min-width: 30%;
   min-height: 40%;
+}
+
+.close-btn {
+  position: absolute;
+  top: 2%;
+  right: 7%;
+
 }

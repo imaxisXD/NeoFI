@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { ReactEventHandler, useEffect, useState } from "react";
 
 interface dropDownProps {
     currentSelected: Symbol;
@@ -18,10 +18,20 @@ function DropDown({ currentSelected, setSymbol }: dropDownProps) {
 
     const [tokenList, setTokenList] = useState<Array<{ name: string; baseAsset: string; image: string }>>([]);
     const [toggleDialog, setToggleDialog] = useState(false);
-
+    const [searchText, setSearchText] = useState('');
     useEffect(() => {
+        const abortController = new AbortController();
+        if (tokenList.length > 0) {
+            return;
+        }
         async function getTokenArray() {
             try {
+                const cachedData = localStorage.getItem("tokenList");
+                if (cachedData) {
+                    setTokenList(JSON.parse(cachedData));
+                    return;
+                }
+
                 const response = await fetch('https://api.binance.com/api/v3/exchangeInfo');
                 const data = await response.json();
                 const symbols = data.symbols
@@ -34,13 +44,17 @@ function DropDown({ currentSelected, setSymbol }: dropDownProps) {
                     image: `https://assets.coincap.io/assets/icons/${baseAsset.toLowerCase()}@2x.png`
                 }));
                 setTokenList(tokenDataArray);
-
+                localStorage.setItem("tokenList", JSON.stringify(tokenDataArray));
             }
             catch (error) {
                 console.error(error);
             }
         }
         getTokenArray();
+        return () => {
+            abortController.abort();
+        }
+
     }, [])
 
     function handleDropdown() {
@@ -50,6 +64,10 @@ function DropDown({ currentSelected, setSymbol }: dropDownProps) {
     function handleSelection(symbol: Symbol) {
         setSymbol(symbol);
         setToggleDialog(false);
+    }
+
+    function handleSearch(input: React.ChangeEvent<HTMLInputElement>) {
+        setSearchText(input.target.value);
     }
 
     return (
@@ -65,20 +83,26 @@ function DropDown({ currentSelected, setSymbol }: dropDownProps) {
             </div>
             {toggleDialog && <div className="dialog-box">
                 <div className="dialog-content">
+                    <div className="close-btn">
+                        <button onClick={handleDropdown}><Image src='closebtn.svg' alt='close' width={24} height={24} /></button>
+                    </div>
                     <div className="search-container">
                         <Image src='search.svg' alt="search-icon" width={17} height={17} />
-                        <input type="text" placeholder="Search chains" />
+                        <input type="text" placeholder="Search chains" onChange={handleSearch} />
                     </div>
                     <div className="token-list">
                         {
-                            tokenList.map((symbol, index) => {
+                            tokenList.filter((symbol) =>
+                                symbol.name.toLowerCase().includes(searchText.toLowerCase())
+                            ).map((symbol, index) => {
                                 return (
                                     <div key={index} className="symbol-row" onClick={() => handleSelection(symbol)} >
                                         <div className="flex-container">
-                                            <Image src={symbol.image} alt={symbol.baseAsset} width={25} height={25} />
+                                            <Image src={symbol.image} alt={symbol.baseAsset} width={25} height={25} onError={() => symbol.image = '/icon-error.png'} />
                                             <span>{symbol.name}</span>
                                         </div>
-                                        <Image src='greentick.svg' alt='selected' width={17} height={12} />
+                                        {symbol.name === currentSelected.name &&
+                                            (<Image src='greentick.svg' alt='selected' width={17} height={12} />)}
                                     </div>
                                 )
                             })
